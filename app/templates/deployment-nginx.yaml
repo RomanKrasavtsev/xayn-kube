@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appLabel }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.appLabel }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appLabel }}
+    spec:
+      volumes:
+        - name: nginx-index
+          emptyDir: {}
+      initContainers:
+        - name: init
+          image: {{ .Values.initContainer.image }}
+          command:
+            - sh
+            - -c
+            - >
+              echo "Hello World! I am on $NAMESPACE. This is my $CONFIGMAP_VALUE" > /usr/share/nginx/html/index.html
+          env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: CONFIGMAP_VALUE
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.configMap.name }}
+                  key: CONFIGMAP_KEY
+          volumeMounts:
+            - name: nginx-index
+              mountPath: /usr/share/nginx/html
+      containers:
+        - name: nginx
+          image: {{ .Values.nginx.image }}
+          volumeMounts:
+            - name: nginx-index
+              mountPath: /usr/share/nginx/html
+          ports:
+            - containerPort: 80
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80

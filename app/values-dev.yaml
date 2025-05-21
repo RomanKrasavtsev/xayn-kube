@@ -1,0 +1,17 @@
+namespace: dev
+
+appLabel: nginx-dev
+
+service:
+  name: nginx-dev
+  port: 80
+  targetPort: 80
+
+ingress:
+  enabled: true
+  name: nginx-ingress-dev
+  host: dev-xayn.duckdns.org
+
+configMap:
+  name: configmap-dev
+  value: DEV_CONFIGMAP_VALUE

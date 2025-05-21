@@ -1,0 +1,17 @@
+namespace: prod
+
+appLabel: nginx-prod
+
+service:
+  name: nginx-prod
+  port: 80
+  targetPort: 80
+
+ingress:
+  enabled: true
+  name: nginx-ingress-prod
+  host: prod-xayn.duckdns.org
+
+configMap:
+  name: configmap-prod
+  value: PROD_CONFIGMAP_VALUE

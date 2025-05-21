@@ -1,0 +1,8 @@
+
+replicaCount: 1
+
+initContainer:
+  image: busybox
+
+nginx:
+  image: nginx:stable
